@@ -8,6 +8,7 @@
 
 import UIKit
 import Alamofire
+import MagicalRecord
 
 enum NewsType:Int {
     case News
@@ -18,7 +19,7 @@ enum NewsType:Int {
 }
 
 class ContentRetriever: NSObject {
-    
+    let parser = Parser()
     static  let shared = ContentRetriever()
     
     func getNews(type:NewsType, page:Int){
@@ -30,8 +31,20 @@ class ContentRetriever: NSObject {
         ]
         
         Alamofire.request(.GET, Constants.urlWith("search"), parameters: params, encoding: .URLEncodedInURL, headers: nil).responseJSON { response in
-            if let JSON = response.result.value {
+            if let JSON = response.result.value as? [String:AnyObject] {
                 print("JSON: \(JSON)")
+                
+                MagicalRecord.saveWithBlock({ context in
+                    var newsToParse = [[String:AnyObject]]()
+
+                    for info in (JSON["documents"] as! [String : AnyObject]).values {
+                        newsToParse.append(info as! [String:AnyObject])
+                    }
+                    
+                    let items = self.parser.parse(newsToParse, context: context)
+                    }, completion: { success, error -> Void in
+                        print(NewsItem.MR_findAll())
+                })
             }
         }
         
