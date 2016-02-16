@@ -10,12 +10,9 @@ import UIKit
 import CoreData
 
 class CoreDataTableViewController: UIViewController {
-
-    class ViewController:
-        UITableViewController,
-    NSFetchedResultsControllerDelegate {
-        
-        
+    
+        @IBOutlet var tableView:UITableView!
+        var cellIdentifier = "UITableViewCell"
         /* `NSFetchedResultsController`
         lazily initialized
         fetches the displayed domain model */
@@ -51,29 +48,10 @@ class CoreDataTableViewController: UIViewController {
         }
         var _fetchedResultsController: NSFetchedResultsController?
         
-        // table view data source
-        
-        // ask the `NSFetchedResultsController` for the section
-        override func tableView(tableView: UITableView,
-            numberOfRowsInSection section: Int)
-            -> Int {
-                let info = self.fetchedResultsController.sections![section] as NSFetchedResultsSectionInfo
-                return info.numberOfObjects
-        }
-        
-        // create and configure each `UITableViewCell`
-        override func tableView(tableView: UITableView,
-            cellForRowAtIndexPath indexPath: NSIndexPath)
-            -> UITableViewCell {
-                let cell = tableView.dequeueReusableCellWithIdentifier("UITableViewCell", forIndexPath: indexPath) as UITableViewCell
-                self.configureCell(cell, atIndexPath: indexPath)
-                return cell
-        }
-        
-        
+        //MARK: - Override this
         //override
         func request()->NSFetchRequest {
-            let request = NewsItem.MR_requestAll()
+            let request = NSFetchRequest()//NewsItem.MR_requestAll()
             
             return request
         }
@@ -83,47 +61,70 @@ class CoreDataTableViewController: UIViewController {
             atIndexPath indexPath: NSIndexPath) {
                 
         }
-        
-        
-        // fetched results controller delegate
-        
-        /* called first
-        begins update to `UITableView`
-        ensures all updates are animated simultaneously */
-        func controllerWillChangeContent(controller: NSFetchedResultsController) {
-            self.tableView.beginUpdates()
-        }
-        
-        /* called:
-        - when a new model is created
-        - when an existing model is updated
-        - when an existing model is deleted */
-        func controller(controller: NSFetchedResultsController,
-            didChangeObject object: AnyObject,
-            atIndexPath indexPath: NSIndexPath?,
-            forChangeType type: NSFetchedResultsChangeType,
-            newIndexPath: NSIndexPath?) {
-                switch type {
-                case .Insert:
-                    self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
-                case .Update:
-                    let cell = self.tableView.cellForRowAtIndexPath(indexPath!)
-                    self.configureCell(cell!, atIndexPath: indexPath!)
-                    self.tableView.reloadRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
-                case .Move:
-                    self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
-                    self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
-                case .Delete:
-                    self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
-                default:
-                    return
-                }
-        }
-        
-        /* called last
-        tells `UITableView` updates are complete */
-        func controllerDidChangeContent(controller: NSFetchedResultsController) {
-            self.tableView.endUpdates()
-        }
+    func itemAt(index:NSIndexPath)->AnyObject {
+        return fetchedResultsController.fetchedObjects![index.row]
     }
+}
+
+//MARK: - TableView Data Source
+extension CoreDataTableViewController:UITableViewDataSource {
+    // table view data source
+    // ask the `NSFetchedResultsController` for the section
+    func tableView(tableView: UITableView,
+        numberOfRowsInSection section: Int)
+        -> Int {
+            let info = self.fetchedResultsController.sections![section] as NSFetchedResultsSectionInfo
+            return info.numberOfObjects
+    }
+    
+    // create and configure each `UITableViewCell`
+    func tableView(tableView: UITableView,
+        cellForRowAtIndexPath indexPath: NSIndexPath)
+        -> UITableViewCell {
+            let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as UITableViewCell
+            self.configureCell(cell, atIndexPath: indexPath)
+            return cell
+    }
+}
+
+//MARK: - FetchedResultsController Delegate
+extension CoreDataTableViewController : NSFetchedResultsControllerDelegate {
+    // fetched results controller delegate
+    
+    /* called first
+    begins update to `UITableView`
+    ensures all updates are animated simultaneously */
+    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        self.tableView.beginUpdates()
+    }
+    
+    /* called:
+    - when a new model is created
+    - when an existing model is updated
+    - when an existing model is deleted */
+    func controller(controller: NSFetchedResultsController,
+        didChangeObject object: AnyObject,
+        atIndexPath indexPath: NSIndexPath?,
+        forChangeType type: NSFetchedResultsChangeType,
+        newIndexPath: NSIndexPath?) {
+            switch type {
+            case .Insert:
+                self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
+            case .Update:
+                let cell = self.tableView.cellForRowAtIndexPath(indexPath!)
+                self.configureCell(cell!, atIndexPath: indexPath!)
+                self.tableView.reloadRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+            case .Move:
+                self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+                self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
+            case .Delete:
+                self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+            }
+    }
+    
+    /* called last
+    tells `UITableView` updates are complete */
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        self.tableView.endUpdates()
+        }
 }

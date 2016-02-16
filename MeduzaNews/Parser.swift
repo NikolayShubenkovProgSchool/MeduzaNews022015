@@ -24,7 +24,7 @@ class Parser: NSObject {
                 item?.title = title
             }
             
-            if  let dateString = info["]pub_date"] as? String {
+            if  let dateString = info["pub_date"] as? String {
                 let formatter = NSDateFormatter()
                 formatter.dateFormat = "yyyy-MM-dd"
                 let date = formatter.dateFromString(dateString)!

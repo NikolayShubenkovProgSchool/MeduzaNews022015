@@ -7,34 +7,35 @@
 //
 
 import UIKit
+import CoreData
 
-class NewsViewController: UIViewController {
+class NewsViewController: CoreDataTableViewController {
 
-    @IBOutlet weak var tableView: UITableView!
+//    @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
+        cellIdentifier = "NewsCell"
         super.viewDidLoad()
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 100
         
         ContentRetriever.shared.getNews(.News, page: 0)
     }
-}
-
-
-extension NewsViewController:UITableViewDataSource {
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("NewsCell")!
-        cell.selectionStyle = .None
+    override func request()->NSFetchRequest {
         
-        return cell
+        let request = NewsItem.MR_requestAllInContext(NSManagedObjectContext.MR_context())
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
+        return request
     }
     
+    override func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
+        let item = itemAt(indexPath) as! NewsItem
+        let aCell = cell as! NewsTableViewCell
+        
+        aCell.topRight.text = NSDate.timeIntervalToDate(item.date).description
+        aCell.title.text    = item.title
+    }
 }
 
-extension NewsViewController:UITableViewDelegate {
-    
-}
+
+
