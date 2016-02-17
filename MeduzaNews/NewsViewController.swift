@@ -15,22 +15,32 @@ class NewsViewController: CoreDataTableViewController {
     override func viewDidLoad() {
         cellIdentifier = "NewsCell"
         super.viewDidLoad()
+        
+        
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 100
         
         ContentRetriever.shared.getNews(.News, page: 0)
     }
     
-    override func request()->NSFetchRequest {
+    //Mark: - Super
+    override func request()-> NSFetchRequest {
         
-        return NSFetchRequest()
+//        let oldWayRequest = NSFetchRequest(entityName: "NewsItem")
+//        oldWayRequest.sortDescriptors = [ NSSortDescriptor(key: "date", ascending: false) ]
+        
+        let request = NewsItem.MR_requestAllSortedBy("date", ascending: false)
+        request.fetchBatchSize = 100
+        
+        return request
     }
     
     override func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
-        let item = itemAt(indexPath) //as! NewsItem
+        
+        let item = itemAt(indexPath) as! NewsItem
         let aCell = cell as! NewsTableViewCell
         
-//        aCell.topRight.text = NSDate.timeIntervalToDate(item.date).description
+        aCell.topRight.text = NSDate.timeIntervalToDate(item.date).description
         aCell.title.text    = item.title
     }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15C50" minimumToolsVersion="Xcode 7.0">
     <entity name="Image" representedClassName=".Image" syncable="YES">
+        <attribute name="index" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="url" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="NewsItem" inverseName="images" inverseEntity="NewsItem" syncable="YES"/>
     </entity>
@@ -9,10 +10,10 @@
         <attribute name="date" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="url" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="images" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Image" inverseName="owner" inverseEntity="Image" syncable="YES"/>
+        <relationship name="images" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Image" inverseName="owner" inverseEntity="Image" syncable="YES"/>
     </entity>
     <elements>
-        <element name="NewsItem" positionX="297" positionY="1188" width="128" height="118"/>
-        <element name="Image" positionX="484" positionY="1218" width="128" height="73"/>
+        <element name="NewsItem" positionX="-4419" positionY="-1998" width="128" height="118"/>
+        <element name="Image" positionX="-4239" positionY="-1968" width="128" height="88"/>
     </elements>
 </model>
