@@ -43,7 +43,7 @@ class ContentRetriever: NSObject {
                     
                     let items = self.parser.parse(newsToParse, context: context)
                     }, completion: { success, error -> Void in
-                        print(NewsItem.MR_findAll())
+//                        print(NewsItem.MR_findAll())
                 })
             }
         }
@@ -61,7 +61,7 @@ class ContentRetriever: NSObject {
     }
     
     struct Constants {
-        static let perPage = 20
+        static let perPage = 5
         static let baseURL = "https://meduza.io/api/v3/"
         static func urlWith(path:String)->String {
             return Constants.baseURL.stringByAppendingString(path)

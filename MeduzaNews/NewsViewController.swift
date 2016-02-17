@@ -23,16 +23,14 @@ class NewsViewController: CoreDataTableViewController {
     
     override func request()->NSFetchRequest {
         
-        let request = NewsItem.MR_requestAllInContext(NSManagedObjectContext.MR_context())
-        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
-        return request
+        return NSFetchRequest()
     }
     
     override func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
-        let item = itemAt(indexPath) as! NewsItem
+        let item = itemAt(indexPath) //as! NewsItem
         let aCell = cell as! NewsTableViewCell
         
-        aCell.topRight.text = NSDate.timeIntervalToDate(item.date).description
+//        aCell.topRight.text = NSDate.timeIntervalToDate(item.date).description
         aCell.title.text    = item.title
     }
 }
